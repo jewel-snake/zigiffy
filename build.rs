@@ -11,17 +11,17 @@ fn main() {
     let path = Path::new(&dir);
 
     env::set_current_dir(path.join("zig")).unwrap();
-
+    // optimization mode specification syntax changed
     Command::new(compiler)
-        .args(&["build", "-Drelease-fast"])
+        .args(["build", "-Doptimize=ReleaseFast"])
         .output()
         .expect("Failed to compile Zig lib");
 
     env::set_current_dir(path).unwrap();
-
+    // library now resides in 'zig-out/lib'
     println!(
         "cargo:rustc-link-search=native={}",
-        Path::new(&dir).join("zig/zig-cache/lib").display()
+        Path::new(&dir).join("zig/zig-out/lib").display()
     );
 
     // // On windows, link against ntdll

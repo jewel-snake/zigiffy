@@ -1,8 +1,9 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const warn = std.debug.warn;
-
-pub fn panic(msg: []const u8, error_return_trace: ?*builtin.StackTrace) noreturn {
+// warn is now print
+const warn = std.debug.print;
+// compiler demands all named variables to be used
+pub fn panic(_: []const u8, _: ?*builtin.StackTrace) noreturn {
     std.os.exit(0xF);
 }
 
@@ -22,14 +23,16 @@ export fn add(a: i32, b: i32) callconv(.C) i32 {
 
 export fn printing(buf: [*]const u8, len: usize) callconv(.C) void {
     var s = buf[0..len];
-    warn("Zig says: {}\n", .{s});
+    // formatting rules changed
+    warn("Zig says: {s}\n", .{s});
 }
 
 fn itoa(comptime N: type, n: N, buff: []u8) void {
     @setRuntimeSafety(false);
 
     comptime var UNROLL_MAX: usize = 4;
-    comptime var DIV_CONST: usize = comptime pow(10, UNROLL_MAX);
+    // double specification of comptime keyword is forbidden
+    comptime var DIV_CONST: usize = pow(10, UNROLL_MAX);
 
     var num = n;
     var len = buff.len;
@@ -44,7 +47,8 @@ fn itoa(comptime N: type, n: N, buff: []u8) void {
             DIV10 *= 10;
         }) {
             var q = std.math.divTrunc(N, num, DIV10) catch break;
-            var r = @truncate(u8, std.math.mod(N, q, 10) catch break) + 48;
+            // @turncate type should be inferred now so use @as
+            var r: u8 = @as(u8, @truncate(std.math.mod(N, q, 10) catch break)) + 48;
             buff[len - CURRENT - 1] = r;
         }
 
@@ -57,7 +61,8 @@ fn itoa(comptime N: type, n: N, buff: []u8) void {
     // Stops at 0xfffff
     while (len != std.math.maxInt(usize)) : (len -%= 1) {
         var q: N = std.math.divTrunc(N, num, 10) catch break;
-        var r: u8 = @truncate(u8, std.math.mod(N, num, 10) catch break) + 48;
+        // see line 50
+        var r: u8 = @as(u8, @truncate(std.math.mod(N, num, 10) catch break)) + 48;
         buff[len] = r;
         num = q;
     }

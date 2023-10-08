@@ -14,3 +14,5 @@ In order for `build.rs` to call the zig compiler, one needs to set `ZIG_COMPILER
 ```
 export ZIG_COMPILER=~/zig-linux-x86_64-0.6.0/zig
 ```
+<br>
+updated for zig version 0.11.0

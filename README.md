@@ -12,7 +12,7 @@ The counterpart, `rustiffy` also exists: [rustiffy](https://github.com/DutchGhos
 This projects works in Windows under the WSL.
 In order for `build.rs` to call the zig compiler, one needs to set `ZIG_COMPILER` as an environment variable to the full path of where your zig compiler is located:
 ```
-export ZIG_COMPILER=~/zig-linux-x86_64-0.6.0/zig
+export ZIG_COMPILER=$(which zig)
 ```
 <br>
 updated for zig version 0.11.0
